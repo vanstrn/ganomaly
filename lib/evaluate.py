@@ -11,6 +11,8 @@ Returns:
 from __future__ import print_function
 
 import os
+import tensorflow as tf
+import datetime
 from sklearn.metrics import roc_curve, auc, average_precision_score, f1_score
 from scipy.optimize import brentq
 from scipy.interpolate import interp1d
@@ -69,3 +71,15 @@ def roc(labels, scores, saveto=None):
 def auprc(labels, scores):
     ap = average_precision_score(labels.cpu(), scores.cpu())
     return ap
+
+class Logger(object):
+    def __init__(self, log_dir):
+
+        log_dir += datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+        self.writer = tf.compat.v1.summary.FileWriter(log_dir)
+
+    def scalar_summary(self, tag, value, step):
+        summary = tf.Summary(
+            value=[tf.Summary.Value(tag=tag, simple_value=value)])
+        self.writer.add_summary(summary, step)

@@ -19,6 +19,7 @@ from lib.networks import NetG, NetD, weights_init
 from lib.visualizer import Visualizer
 from lib.loss import l2_loss
 from lib.evaluate import evaluate
+from lib.evaluate import Logger
 
 
 class BaseModel():
@@ -36,6 +37,8 @@ class BaseModel():
         self.trn_dir = os.path.join(self.opt.outf, self.opt.name, 'train')
         self.tst_dir = os.path.join(self.opt.outf, self.opt.name, 'test')
         self.device = torch.device("cuda:0" if self.opt.device != 'cpu' else "cpu")
+
+        self.logger = Logger('./logs/' + self.opt.name + '_')
 
     ##
     def set_input(self, input:torch.Tensor):
@@ -165,6 +168,7 @@ class BaseModel():
             # Train for one epoch
             self.train_one_epoch()
             res = self.test()
+            self.logger.scalar_summary(self.opt.metric, res[self.opt.metric], self.epoch)
             if res[self.opt.metric] > best_auc:
                 best_auc = res[self.opt.metric]
                 self.save_weights(self.epoch)
