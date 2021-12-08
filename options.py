@@ -26,7 +26,7 @@ class Options():
 
         ##
         # Base
-        self.parser.add_argument('--dataset', default='cifar10', help='folder | cifar10 | mnist ')
+        self.parser.add_argument('--dataset', default='cifar10', help='folder | cifar10 | mnist | stl10')
         self.parser.add_argument('--dataroot', default='', help='path to dataset')
         self.parser.add_argument('--batchsize', type=int, default=64, help='input batch size')
         self.parser.add_argument('--workers', type=int, help='number of data loading workers', default=8)

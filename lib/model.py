@@ -55,8 +55,8 @@ class BaseModel():
 
     ##
     def seed(self, seed_value):
-        """ Seed 
-        
+        """ Seed
+
         Arguments:
             seed_value {int} -- [description]
         """

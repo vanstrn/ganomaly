@@ -6,6 +6,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.parallel
+from torchsummary import summary
+import torchvision
 
 ##
 def weights_init(mod):
@@ -60,11 +62,10 @@ class Encoder(nn.Module):
                             nn.LeakyReLU(0.2, inplace=True))
             cndf = cndf * 2
             csize = csize / 2
-
         # state size. K x 4 x 4
         if add_final_conv:
             main.add_module('final-{0}-{1}-conv'.format(cndf, 1),
-                            nn.Conv2d(cndf, nz, 4, 1, 0, bias=False))
+                            nn.Conv2d(cndf, nz, int(csize), 1, 0, bias=False))
 
         self.main = main
 
@@ -87,7 +88,7 @@ class Decoder(nn.Module):
         assert isize % 16 == 0, "isize has to be a multiple of 16"
 
         cngf, tisize = ngf // 2, 4
-        while tisize != isize:
+        while tisize < isize:
             cngf = cngf * 2
             tisize = tisize * 2
 
@@ -122,8 +123,15 @@ class Decoder(nn.Module):
 
         main.add_module('final-{0}-{1}-convt'.format(cngf, nc),
                         nn.ConvTranspose2d(cngf, nc, 4, 2, 1, bias=False))
+        csize = csize * 2
         main.add_module('final-{0}-tanh'.format(nc),
                         nn.Tanh())
+        if csize != isize:
+            self.finalCrop=True
+            self.x0 = (csize - isize) // 2
+            self.x1 = self.x0 + isize
+        else:
+            self.finalCrop=False
         self.main = main
 
     def forward(self, input):
@@ -131,7 +139,10 @@ class Decoder(nn.Module):
             output = nn.parallel.data_parallel(self.main, input, range(self.ngpu))
         else:
             output = self.main(input)
-        return output
+        if self.finalCrop:
+            return output[:,:,self.x0:self.x1,self.x0:self.x1]
+        else:
+            return output
 
 
 ##
@@ -166,8 +177,11 @@ class NetG(nn.Module):
     def __init__(self, opt):
         super(NetG, self).__init__()
         self.encoder1 = Encoder(opt.isize, opt.nz, opt.nc, opt.ngf, opt.ngpu, opt.extralayers)
+        # summary(self.encoder1,(3, 96,96),device="cpu")
         self.decoder = Decoder(opt.isize, opt.nz, opt.nc, opt.ngf, opt.ngpu, opt.extralayers)
+        # summary(self.decoder,(100, 1,1),device="cpu")
         self.encoder2 = Encoder(opt.isize, opt.nz, opt.nc, opt.ngf, opt.ngpu, opt.extralayers)
+        # summary(self.encoder2,(3, 96,96),device="cpu")
 
     def forward(self, x):
         latent_i = self.encoder1(x)
