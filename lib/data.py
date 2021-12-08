@@ -92,8 +92,8 @@ def load_data(opt):
         dataset['train'] = STL10(root='./data', split='train', download=True, transform=transform)
         dataset['test'] = STL10(root='./data', split='test', download=True, transform=transform)
 
-        dataset['train'].data, dataset['train'].targets, \
-        dataset['test'].data, dataset['test'].targets = get_stl_anomaly_dataset(
+        dataset['train'].data, dataset['train'].labels, \
+        dataset['test'].data, dataset['test'].labels = get_stl_anomaly_dataset(
             trn_img=dataset['train'].data,
             trn_lbl=dataset['train'].labels,
             tst_img=dataset['test'].data,
