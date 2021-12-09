@@ -286,8 +286,8 @@ def get_cifar_anomaly_dataset(trn_img, trn_lbl, tst_img, tst_lbl, abn_cls_idx=0,
     #        . -> abnormal
     new_trn_img = np.copy(nrm_trn_img)
     new_trn_lbl = np.copy(nrm_trn_lbl)
-    new_tst_img = np.concatenate((nrm_tst_img, abn_tst_img), axis=0)
-    new_tst_lbl = np.concatenate((nrm_tst_lbl, abn_tst_lbl), axis=0)
+    new_tst_img = np.concatenate((nrm_tst_img, abn_trn_img, abn_tst_img), axis=0)
+    new_tst_lbl = np.concatenate((nrm_tst_lbl, abn_trn_lbl, abn_tst_lbl), axis=0)
 
     return new_trn_img, new_trn_lbl, new_tst_img, new_tst_lbl
 
@@ -367,8 +367,8 @@ def get_stl_anomaly_dataset(trn_img, trn_lbl, tst_img, tst_lbl, abn_cls_idx=0, m
     #        . -> abnormal
     new_trn_img = np.copy(nrm_trn_img)
     new_trn_lbl = np.copy(nrm_trn_lbl)
-    new_tst_img = np.concatenate((nrm_tst_img, abn_tst_img), axis=0)
-    new_tst_lbl = np.concatenate((nrm_tst_lbl, abn_tst_lbl), axis=0)
+    new_tst_img = np.concatenate((nrm_tst_img, abn_trn_img, abn_tst_img), axis=0)
+    new_tst_lbl = np.concatenate((nrm_tst_lbl, abn_trn_lbl, abn_tst_lbl), axis=0)
 
     return new_trn_img, new_trn_lbl, new_tst_img, new_tst_lbl
 
@@ -442,8 +442,8 @@ def get_mnist_anomaly_dataset(trn_img, trn_lbl, tst_img, tst_lbl, abn_cls_idx=0,
     # Create new anomaly dataset based on the following data structure:
     new_trn_img = nrm_trn_img.clone()
     new_trn_lbl = nrm_trn_lbl.clone()
-    new_tst_img = torch.cat((nrm_tst_img, abn_tst_img), dim=0)
-    new_tst_lbl = torch.cat((nrm_tst_lbl, abn_tst_lbl), dim=0)
+    new_tst_img = torch.cat((nrm_tst_img, abn_trn_img, abn_tst_img), dim=0)
+    new_tst_lbl = torch.cat((nrm_tst_lbl, abn_trn_lbl, abn_tst_lbl), dim=0)
 
     return new_trn_img, new_trn_lbl, new_tst_img, new_tst_lbl
 
