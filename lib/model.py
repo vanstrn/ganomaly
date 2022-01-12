@@ -40,6 +40,8 @@ class BaseModel():
 
         self.logger = Logger('./logs/' + self.opt.name + '_')
 
+        self.update_iter = 0
+
     ##
     def set_input(self, input:torch.Tensor):
         """ Set input and ground truth
@@ -364,3 +366,8 @@ class Ganomaly(BaseModel):
         self.backward_d()
         self.optimizer_d.step()
         if self.err_d.item() < 1e-5: self.reinit_d()
+
+        #Logging Losses
+        self.logger.scalar_summary("Discrim Loss", self.err_d, self.update_iter)
+        self.logger.scalar_summary("Generator Loss", self.err_g, self.update_iter)
+        self.update_iter+=1

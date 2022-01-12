@@ -8,7 +8,7 @@ do
     for i in $(seq 0 9)
     do
         echo "Running MNIST, Abnormal Digit: $i"
-        python train.py --dataset stl10 --isize 96 --nc 3 --niter 500 --abnormal_class $i --manualseed $m --name stl${i}_${m}
+        python train.py --dataset stl10 --isize 96 --nc 3 --niter 500 --abnormal_class $i --manualseed $m --name stl${i}_${m} --save_test_images
     done
 done
 exit 0
